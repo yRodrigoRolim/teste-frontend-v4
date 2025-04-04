@@ -13,8 +13,8 @@
         </button>
     </div>
 
-    <div class="flex-1 h-ful">
-        <nav class="py-2 flex sm:flex-col flex-row justify-around">
+    <div class="flex-1 h-ful" id="sidebar-icons">
+        <nav class="py-2 flex sm:flex-col flex-row justify-around transition-all duration-[1s]">
 
             <a href="index.php" title="Como funciona o desafio?" class="flex items-center px-4 py-2 text-aiko-purple sidebar-item">
                 <i class="fas fa-home w-5"></i>

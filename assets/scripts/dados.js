@@ -78,8 +78,8 @@ function criarLinhaTabela(equipamento, modelo, estado, postionMaisRecent) {
       ` : 'Sem estado'}
     </td>
   `;
+    processarLotesDeLocalizacao(postionMaisRecent.lat, postionMaisRecent.lon, modelo.name)
 
-    marcarLocalMapa(postionMaisRecent.lat, postionMaisRecent.lon, modelo.name)
 
     marcarLocal(postionMaisRecent.lat, postionMaisRecent.lon).then(endereco => {
 
@@ -131,11 +131,11 @@ function modalRegiao(id) {
 
     const modal = document.getElementById('estadoModal');
     const content = document.getElementById('modalContent');
-    
+
     content.innerHTML = '';
 
     posicoes.positions.forEach(position => {
-        
+
         marcarLocal(position.lat, position.lon).then(endereco => {
             const div = document.createElement('div');
             div.className = `p-2 border rounded bg-gray-50`;
@@ -186,8 +186,7 @@ async function marcarLocal(lat, lon) {
     const chave = `${lat},${lon}`;
     const cacheLocal = localStorage.getItem(chave);
     if (cacheLocal) return cacheLocal;
-
-    const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&addressdetails=1`;
+    const url = `https://us1.locationiq.com/v1/reverse.php?key=YOUR_API_KEY&lat=${lat}&lon=${lon}&format=json`;
 
     try {
         const response = await fetch(url, {
@@ -202,6 +201,7 @@ async function marcarLocal(lat, lon) {
         const estado = address.state || '';
         const resultado = `${cidade} - ${estado}`;
         localStorage.setItem(chave, resultado);
+
         return resultado;
     } catch (err) {
         console.error("Erro ao buscar endereço:", err);
@@ -209,3 +209,11 @@ async function marcarLocal(lat, lon) {
     }
 }
 start();
+
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+async function processarLotesDeLocalizacao(postionMaisRecentlat, postionMaisRecentlon, modeloname) {
+    await marcarLocalMapa(postionMaisRecentlat, postionMaisRecentlon, modeloname)
+    await delay(1100); // espera 1.1 segundos entre cada requisição
+}

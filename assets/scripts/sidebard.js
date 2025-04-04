@@ -1,4 +1,5 @@
 document.getElementById("sidebard-config").addEventListener("click", function () {
+    if (window.innerWidth <= 640) return; // Só executa se a tela for menor que 640px
     const sidebar = document.getElementById("sidebar-container");
     const disableMobileElements = document.querySelectorAll(".disable-sidebar");
     const logosidebar = document.getElementById("disable-sidebar-logo");
@@ -27,6 +28,29 @@ document.getElementById("sidebard-config").addEventListener("click", function ()
         setTimeout(() => {
             logosidebar.classList.add("hidden")
         }, 150);
-        
+
+    }
+});
+
+document.getElementById("sidebard-config").addEventListener("click", function () {
+    if (window.innerWidth >= 640) return; // Só executa se a tela for menor que 640px
+    const nav = document.querySelector("#sidebar-icons nav")
+    const a = document.querySelectorAll("#sidebar-icons nav a")
+    if (nav.classList.contains("!h-0")) {
+        document.getElementById("sidebard-config").classList.add("rotate-180")
+
+        nav.classList.add("py-2")
+        nav.classList.remove("!h-0")
+        a.forEach(element => {
+            element.classList.remove("opacity-0")
+        });
+    } else {
+        nav.classList.remove("py-2")
+        nav.classList.add("!h-0")
+        document.getElementById("sidebard-config").classList.remove("rotate-180")
+
+        a.forEach(element => {
+            element.classList.add("opacity-0")
+        });
     }
 });

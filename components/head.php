@@ -22,10 +22,19 @@
         #sidebar-container a span {
             display: none;
         }
+
+        #sidebard-config {
+            transform: rotate(-90deg);
+        }
+
         @media (min-width: 640px) {
             #sidebar-container a span {
-            display: block;
-        }
+                display: block;
+            }
+
+            #sidebard-config {
+                transform: rotate(0deg);
+            }
         }
     </style>
     <script>
