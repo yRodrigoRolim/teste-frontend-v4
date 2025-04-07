@@ -49,7 +49,7 @@ Os arquivos JSON utilizados estão na pasta `assets/data/`, e incluem:
 
 ## 📹 Demonstração em Vídeo
 
-**▶️ Link do vídeo explicativo**: [Clique aqui para assistir](https://www.youtube.com/watch?v=SEU-LINK-AQUI)  
+**▶️ Link do vídeo explicativo**: [Clique aqui para assistir](https://www.youtube.com/watch?v=GfJr442F1DE&feature=youtu.be)  
 (No vídeo eu explico o funcionamento da aplicação, arquitetura, desafios e decisões tomadas)
 
 ---
@@ -69,4 +69,5 @@ Os arquivos JSON utilizados estão na pasta `assets/data/`, e incluem:
 
 1. Clone o repositório:
    ```bash
-   git clone https://github.com/seu-usuario/aiko-teste.git
+   git clone --branch teste/rodrigo-rolim https://github.com/yRodrigoRolim/teste-frontend-v4.git
+
