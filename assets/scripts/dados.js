@@ -51,10 +51,8 @@ function carregarDadosTabela() {
         const postionMaisRecent = obterMaisRecente(position_Historic.positions);
 
         const linha = criarLinhaTabela(equipamento, modelo, estado, postionMaisRecent);
-        const detail = criarDetails();
 
         tbody.appendChild(linha);
-        tbody.appendChild(detail);
     });
 }
 
@@ -89,11 +87,7 @@ function criarLinhaTabela(equipamento, modelo, estado, postionMaisRecent) {
     salvarCidadeEstado(postionMaisRecent.lat, postionMaisRecent.lon).then(endereco => {
         row.innerHTML += `
           <td class="px-6 py-4 whitespace-nowrap"><p>${endereco}</p></td>
-          <td class="px-6 py-4 whitespace-nowrap text-right">
-            <button onclick="toggleDetails(this)">
-              <i class="fas fa-chevron-down"></i>
-            </button>
-          </td>
+         
         `;
       });
       
