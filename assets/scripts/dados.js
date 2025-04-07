@@ -1,3 +1,4 @@
+// Definir objetos globais com os valores do json
 const dataStore = {
     equipamentos: [],
     modelos: [],
@@ -8,6 +9,7 @@ const dataStore = {
     estadoMap: {}
 };
 
+// Carregar o json
 function carregarJSON(caminho, chave, callback) {
     fetch(caminho)
         .then(res => res.json())
@@ -31,7 +33,7 @@ function start() {
         });
     });
 }
-
+// Criar uma tabela com os dados
 function carregarDadosTabela() {
     const tbody = document.getElementById('equipmentTableBody');
     tbody.innerHTML = '';
@@ -56,6 +58,7 @@ function carregarDadosTabela() {
     });
 }
 
+// Adicionar linha na tabela com os dados
 function criarLinhaTabela(equipamento, modelo, estado, postionMaisRecent) {
     const row = document.createElement('tr');
     row.className = "bg-white border-b border-gray-200";
@@ -69,7 +72,7 @@ function criarLinhaTabela(equipamento, modelo, estado, postionMaisRecent) {
           <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 h-5 w-5 text-[${estado.color}]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          <div class="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-gray-500 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity z-10 w-64 hover:!opacity-0 text-center">
+          <div stye="margin-bottom: 20px !important" class="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-gray-500 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity z-10 w-64 hover:!opacity-0 text-center">
             Veja o histórico do estado de ${modelo?.name || 'Desconhecido'}
             <div class="absolute bottom-[-2px] left-1/2 w-2 h-2 bg-gray-500 rotate-45"></div>
           </div>
@@ -78,32 +81,22 @@ function criarLinhaTabela(equipamento, modelo, estado, postionMaisRecent) {
       ` : 'Sem estado'}
     </td>
   `;
-    processarLotesDeLocalizacao(postionMaisRecent.lat, postionMaisRecent.lon, modelo.name)
+  // processarLotesDeLocalizacao(postionMaisRecent.lat, postionMaisRecent.lon, modelo.name)
+  let textLocal = `<p class="!m-0"><b>Código:</b> ${equipamento.name}</p><p class="!m-0 !mt-2"><b>Equipamento:</b> ${modelo.name}</p><p class="!m-0 !mt-2 text-[${estado.color}]"><b>Status:</b> ${estado.name}</p>`
+  // Pegar cidade e marcar no mapa
+    marcarNoMapa(postionMaisRecent.lat, postionMaisRecent.lon, textLocal, modelo.name);
 
-
-    marcarLocal(postionMaisRecent.lat, postionMaisRecent.lon).then(endereco => {
-
+    salvarCidadeEstado(postionMaisRecent.lat, postionMaisRecent.lon).then(endereco => {
         row.innerHTML += `
-        
-        <td class="px-6 py-4 whitespace-nowrap">
-            <div class="relative group flex cursor-pointer hover:text-gray-900">
-              <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 h-5 w-5 text-[#333]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c1.1046 0 2-.8954 2-2s-.8954-2-2-2-2 .8954-2 2 .8954 2 2 2zm0 10c-4.4183 0-8-5.3726-8-10a8 8 0 1116 0c0 4.6274-3.5817 10-8 10z" />
-             </svg>
-              <div class="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-gray-500 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity z-10 w-64 hover:!opacity-0 text-center">
-                Veja o histórico de ${modelo?.name || 'Desconhecido'}
-                <div class="absolute bottom-[-2px] left-1/2 w-2 h-2 bg-gray-500 rotate-45"></div>
-              </div>
-              <button onclick='modalRegiao("${equipamento.id}")'>${endereco}</button>
-            </div>
-        </td>
-      <td class="px-6 py-4 whitespace-nowrap text-right">
-        <button onclick="toggleDetails(this)">
-          <i class="fas fa-chevron-down"></i>
-        </button>
-      </td>
-    `;
-    });
+          <td class="px-6 py-4 whitespace-nowrap"><p>${endereco}</p></td>
+          <td class="px-6 py-4 whitespace-nowrap text-right">
+            <button onclick="toggleDetails(this)">
+              <i class="fas fa-chevron-down"></i>
+            </button>
+          </td>
+        `;
+      });
+      
 
     return row;
 }
@@ -114,7 +107,7 @@ function criarDetails() {
 
     details.innerHTML = `
     <td colspan="5" class="px-6 py-4">
-      <strong>Detalhes:</strong> Esse MacBook tem 16GB de RAM, SSD de 512GB, comprado em 2022. Em perfeito estado.
+      <strong>Detalhes:</strong> esse dispositivo já esteve em 
     </td>
   `;
     return details;
@@ -126,27 +119,6 @@ function obterMaisRecente(lista) {
     });
 }
 
-function modalRegiao(id) {
-    const posicoes = dataStore.posicoes.find(m => m.equipmentId === id)
-
-    const modal = document.getElementById('estadoModal');
-    const content = document.getElementById('modalContent');
-
-    content.innerHTML = '';
-
-    posicoes.positions.forEach(position => {
-
-        marcarLocal(position.lat, position.lon).then(endereco => {
-            const div = document.createElement('div');
-            div.className = `p-2 border rounded bg-gray-50`;
-            div.innerHTML = `<p><b>Data:</b> ${new Date(position.date).toLocaleDateString()} <br> <b>Horário:</b> ${new Date(position.date).toLocaleTimeString()} <br> <b>Região:</b> ${endereco}</p>`;
-
-            content.appendChild(div);
-        });
-    });
-
-    modal.classList.remove('hidden');
-}
 
 function modalEstado(id) {
     const historico = dataStore.historicoMap[id];
@@ -181,39 +153,53 @@ function toggleDetails(button) {
     const row = button.closest('tr').nextElementSibling;
     row.classList.toggle('hidden');
 }
-
-async function marcarLocal(lat, lon) {
-    const chave = `${lat},${lon}`;
-    const cacheLocal = localStorage.getItem(chave);
-    if (cacheLocal) return cacheLocal;
-    const url = `https://us1.locationiq.com/v1/reverse.php?key=YOUR_API_KEY&lat=${lat}&lon=${lon}&format=json`;
-
-    try {
-        const response = await fetch(url, {
-            headers: {
-                'User-Agent': 'MeuAppWeb/1.0 (email@exemplo.com)'
-            }
-        });
-
-        const data = await response.json();
-        const address = data.address;
-        const cidade = address.city || address.town || address.village || address.municipality || '';
-        const estado = address.state || '';
-        const resultado = `${cidade} - ${estado}`;
-        localStorage.setItem(chave, resultado);
-
-        return resultado;
-    } catch (err) {
-        console.error("Erro ao buscar endereço:", err);
-        return null;
+async function salvarCidadeEstado(lat, lon) {
+    const chave = `cidade_estado_${lat}_${lon}`;
+  
+    // 1. Verifica cache
+    const cache = localStorage.getItem(chave);
+    if (cache) {
+      return cache;
     }
-}
+  
+    // 2. Faz requisição se não houver cache
+    const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&addressdetails=1`;
+  
+    try {
+      const response = await fetch(url, {
+        headers: {
+          'User-Agent': 'local-app',
+          'Accept-Language': 'pt-BR'
+        }
+      });
+  
+      if (!response.ok) throw new Error("Erro na requisição");
+  
+      const data = await response.json();
+      const address = data.address;
+  
+      const cidade =
+        address.city ||
+        address.town ||
+        address.village ||
+        address.municipality ||
+        "Cidade desconhecida";
+  
+      const estado = address.state || "Estado desconhecido";
+  
+      const resultado = `${cidade} - ${estado}`;
+  
+      // 3. Salva no cache
+      localStorage.setItem(chave, resultado);
+  
+      return resultado;
+    } catch (error) {
+      console.error("Erro ao buscar dados de localização:", error);
+      return "Local desconhecido";
+    }
+  }
+  
+  
+
 start();
 
-function delay(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-async function processarLotesDeLocalizacao(postionMaisRecentlat, postionMaisRecentlon, modeloname) {
-    await marcarLocalMapa(postionMaisRecentlat, postionMaisRecentlon, modeloname)
-    await delay(1100); // espera 1.1 segundos entre cada requisição
-}
