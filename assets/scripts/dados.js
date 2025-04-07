@@ -95,17 +95,7 @@ function criarLinhaTabela(equipamento, modelo, estado, postionMaisRecent) {
     return row;
 }
 
-function criarDetails() {
-    const details = document.createElement('tr');
-    details.className = "details-row hidden bg-gray-100";
 
-    details.innerHTML = `
-    <td colspan="5" class="px-6 py-4">
-      <strong>Detalhes:</strong> esse dispositivo já esteve em 
-    </td>
-  `;
-    return details;
-}
 
 function obterMaisRecente(lista) {
     return lista.reduce((maisRecente, atual) => {
